@@ -2,7 +2,7 @@
 > **국민연금 기금 소진 완화 정책 수립을 위한 통계적 분석**  
 > GLSAR 회귀 + 시나리오 시뮬레이션 기반 재정 지속가능성 평가  
 > _2025 응용통계학과 통계최강자전 · 신통방통응통_  
-> _정명훈 · 김재현 · 배지성 · 최지영 · 최은서_
+> _정명훈 · 김재현 · 배지성 · 최지영 · 최은서_ &nbsp;&nbsp; **🏆 우수상 수상**
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue) ![statsmodels](https://img.shields.io/badge/statsmodels-GLSAR-orange) ![pandas](https://img.shields.io/badge/pandas-✓-green)
 
