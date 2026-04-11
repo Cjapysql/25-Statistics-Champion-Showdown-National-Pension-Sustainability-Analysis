@@ -50,6 +50,12 @@
 | **급변가능 변수** | 실질GDP성장률, 실업률, 인플레이션, 기금운용수익률 | **Z-score capping (±3σ)** | 경기 변동·외부 충격으로 일시적 급등락 가능 |
 | **이외 변수** | 운용수익, 기금조성·지출, 관리운영비 | **IQR capping (1.5×IQR)** | 측정 오차·단기 변동이 잦은 재정항목 |
 
+<p align="center">
+  <img src="assets/outlier_strategy.png" width="75%"/>
+  <br/>
+  <em>변수 성격에 따른 3그룹 차등 처리 — 추세형은 보존, 급변가능은 Z-score, 그 외는 IQR capping</em>
+</p>
+
 → "제거가 아닌 **경계값 완화(capping)**"를 통해 데이터 손실 없이 극단값의 영향만 감소시킴.
 
 ## 4. 분석 방법론
@@ -63,6 +69,12 @@ $$\text{수지비율} = \frac{\text{연금급여지급}}{\text{연금보험료}}
 ### 4-2. 변수 선택: 왜 자동 선택을 쓰지 않았는가
 
 Forward / Backward / Stepwise 같은 자동 선택을 **의도적으로 배제**했습니다.
+
+<p align="center">
+  <img src="assets/correlation_heatmap.png" width="75%"/>
+  <br/>
+  <em>전체 변수 간 상관관계 — 대부분 0.8 이상의 강한 자기상관, 다중공선성 완화 필요성 시사</em>
+</p>
 
 | 이유 | 설명 |
 |---|---|
@@ -80,6 +92,12 @@ Forward / Backward / Stepwise 같은 자동 선택을 **의도적으로 배제**
 | 모델 3 | Adj R² 0.406, GDP p=0.5 | 탈락 |
 | 모델 4–7 | 일부 변수 p-value 초과 | 탈락 |
 | **모델 8 (최종)** | **Adj R² 0.926, DW 1.667, VIF < 2.0** | **선정** |
+
+<p align="center">
+  <img src="assets/model_comparison.png" width="75%"/>
+  <br/>
+  <em>8개 후보 모델 통계 진단 결과 — 모델 8만이 모든 기준(VIF, p-value, Adj R², DW)을 충족</em>
+</p>
 
 **최종 변수**: 소득대체율, 합계출산율, 실업률, 소비자물가상승률(CPI)
 
@@ -101,6 +119,12 @@ Forward / Backward / Stepwise 같은 자동 선택을 **의도적으로 배제**
 | 합계출산율 | -0.3222 | **0.000** | 수지비율 개선 (납입 기반 확대) |
 | 실업률 | -0.0496 | **0.028** | 수지비율 악화 (수입↓) |
 | CPI | -0.0137 | 0.099 | 한계적 유의, 장기 지출 압력 |
+
+<p align="center">
+  <img src="assets/glsar_summary.png" width="65%"/>
+  <br/>
+  <em>GLSAR 최종 모델 summary — Adj R² 0.910, DW 1.667, 잔차 자기상관 거의 제거됨</em>
+</p>
 
 **모델 통계량**: Adj R² = **0.910**, Durbin–Watson = **1.667**, 평균 VIF ≤ 2.0
 
@@ -135,6 +159,12 @@ $$F_t = F_{t-1}(1 + i_t) + c_t W_t - (B_t + O_t)$$
 
 ### 6-2. 기본 시나리오 결과
 
+<p align="center">
+  <img src="assets/fund_baseline.png" width="85%"/>
+  <br/>
+  <em>현행 유지(2054년 고갈) vs 보험료율 점진 인상(2063년 고갈) — 9년 연기 효과</em>
+</p>
+
 - **현행 유지(보험료율 9%)**: **2054년** 기금 소진
 - **현재 정책(2033년까지 13% 점진 인상)**: **2063년** 기금 소진 → 약 **9년 연기**
 
@@ -147,6 +177,12 @@ $$F_t = F_{t-1}(1+i) + c_t \underbrace{(W_t^{\text{real}} \cdot \text{CPI}_t)}_{
 급여는 전년도 CPI를 반영해 인상되므로 t-1 시점 CPI를 사용 → 인플레이션의 누적 효과를 정확히 포착.
 
 ### 6-4. 민감도 분석: CPI가 핵심 변수인 이유
+
+<p align="center">
+  <img src="assets/cpi_sensitivity.png" width="85%"/>
+  <br/>
+  <em>CPI 1.5% → 3.5% 변화 시 기금 고갈 시점이 2070년 → 2063년으로 약 7년 단축</em>
+</p>
 
 CPI를 단계적으로 변화시켜 시뮬레이션:
 
@@ -171,6 +207,14 @@ CPI를 단계적으로 변화시켜 시뮬레이션:
 | 10년마다 +3%p | 2088년 |
 
 **실험 C** (CPI 2.0%) / **실험 D** (CPI 2.5%) 도 동일 구조로 수행 → 보험료율 인상 폭이 클수록 고갈 연기 효과가 크지만, **CPI가 높아지면 그 효과가 빠르게 잠식됨**을 확인.
+
+<p align="center">
+  <img src="assets/scenario_b.png" width="32%"/>
+  <img src="assets/scenario_c.png" width="32%"/>
+  <img src="assets/scenario_d.png" width="32%"/>
+  <br/>
+  <em>좌: 실험 B (CPI 1.5%) / 중: 실험 C (CPI 2.0%) / 우: 실험 D (CPI 2.5%) — CPI가 높아질수록 보험료율 인상의 고갈 연기 효과가 빠르게 잠식됨</em>
+</p>
 
 ## 7. 시사점 및 정책 제안
 
